@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/emilbayes/parallel-queue.svg?branch=master)](https://travis-ci.org/emilbayes/parallel-queue)
 
-> Run tasks in parallel, but queue after a certain limit
+> Queue for parallel tasks that can cancel and is destoryable
 
 ## Usage
 

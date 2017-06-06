@@ -1,7 +1,7 @@
 {
   "name": "parallel-queue",
   "version": "0.0.0",
-  "description": "Run tasks in parallel, but queue after a certain limit",
+  "description": "Queue for parallel tasks that can cancel and is destoryable",
   "main": "index.js",
   "dependencies": {},
   "devDependencies": {
