@@ -1,0 +1,26 @@
+{
+  "name": "parallel-queue",
+  "version": "0.0.0",
+  "description": "Run tasks in parallel, but queue after a certain limit",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "tape": "^4.6.3"
+  },
+  "scripts": {
+    "test": "tape test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emilbayes/parallel-queue.git"
+  },
+  "keywords": [
+
+  ],
+  "author": "Emil Bay <github@tixz.dk>",
+  "license": "Proprietary",
+  "bugs": {
+    "url": "https://github.com/emilbayes/parallel-queue/issues"
+  },
+  "homepage": "https://github.com/emilbayes/parallel-queue#readme"
+}
