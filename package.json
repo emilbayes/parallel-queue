@@ -5,18 +5,19 @@
   "main": "index.js",
   "dependencies": {},
   "devDependencies": {
+    "browserify": "^14.4.0",
+    "coverify": "^1.4.1",
     "tape": "^4.6.3"
   },
   "scripts": {
-    "test": "tape test"
+    "test": "tape test",
+    "coverage": "browserify -t coverify test.js | node | coverify"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/emilbayes/parallel-queue.git"
   },
-  "keywords": [
-
-  ],
+  "keywords": [],
   "author": "Emil Bay <github@tixz.dk>",
   "license": "ISC",
   "bugs": {

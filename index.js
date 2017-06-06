@@ -1,11 +1,13 @@
 module.exports = ParallelQueue
 
-function ParallelQueue (limit, worker) {
-  if (!(this instanceof ParallelQueue)) return new ParallelQueue(limit, worker)
+function ParallelQueue (parallel, worker) {
+  if (!(this instanceof ParallelQueue)) return new ParallelQueue(parallel, worker)
 
+  this._worker = worker
   this._queue = []
   this._running = []
-  this.parallel = limit
+  this.parallel = parallel
+  this.destroyed = false
 }
 
 Object.defineProperty(ParallelQueue.prototype, 'pending', {
@@ -16,6 +18,7 @@ Object.defineProperty(ParallelQueue.prototype, 'pending', {
 })
 
 ParallelQueue.prototype.push = function (task, cb) {
+  if (this.destroyed === true) return cb(new Error('Already destroyed'))
   var args = {
     task: task,
     cb: cb
@@ -29,20 +32,23 @@ ParallelQueue.prototype.push = function (task, cb) {
 }
 
 ParallelQueue.prototype.destroy = function (err) {
-  var i
-  for (i = 0; i < this._queue.length; i++) this._cancel(this._queue[i], err)
-  for (i = 0; i < this._running.length; i++) this._cancel(this._running[i], err)
+  while (this._queue.length) this._cancel(this._queue[0], err)
+  while (this._running.length) this._cancel(this._running[0], err)
+  this.destroyed = true
 }
 
 ParallelQueue.prototype._cancel = function (args, err) {
-  var idx = this._queue.indexOf(args)
-  if (idx < 0) {
-    // Look in _running if not in _queue
-    idx = this._running.indexOf(args)
-    if (idx < 0) return
+  var qidx = this._queue.indexOf(args)
+  if (qidx >= 0) {
+    this._queue.splice(qidx, 1)
   }
 
-  this._queue.splice(idx, 1)
+  var ridx = this._running.indexOf(args)
+  if (ridx >= 0) {
+    this._running.splice(ridx, 1)
+  }
+
+  if (ridx < 0 && qidx < 0) return
 
   if (err == null) {
     err = new Error('Cancelled operation')
@@ -53,7 +59,7 @@ ParallelQueue.prototype._cancel = function (args, err) {
 }
 
 ParallelQueue.prototype._kick = function () {
-  if (this._running >= this.parallel) return
+  if (this._running.length >= this.parallel) return
 
   var args = this._queue.shift()
   if (args == null) return
@@ -64,13 +70,13 @@ ParallelQueue.prototype._kick = function () {
 
   var self = this
   function done (err, res1, res2, res3) {
-    process.nextTick(function () {
-      var idx = self._running.indexOf(args)
-      if (idx >= 0) {
-        self._running.splice(idx, 1)
-        args.cb(err, res1, res2, res3)
-      }
+    var idx = self._running.indexOf(args)
+    if (idx >= 0) {
+      self._running.splice(idx, 1)
+    }
 
+    process.nextTick(function () {
+      if (idx >= 0) args.cb(err, res1, res2, res3)
       self._kick()
     })
   }
