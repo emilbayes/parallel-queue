@@ -10,7 +10,7 @@
     "tape": "^4.6.3"
   },
   "scripts": {
-    "test": "tape test",
+    "test": "tape test.js",
     "coverage": "browserify -t coverify test.js | node | coverify"
   },
   "repository": {
