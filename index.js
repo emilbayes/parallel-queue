@@ -26,7 +26,7 @@ ParallelQueue.prototype.push = function (task, cb) {
 
   this._queue.push(args)
 
-  this._kick()
+  process.nextTick(this._kick.bind(this))
 
   return this._cancel.bind(this, args)
 }

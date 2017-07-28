@@ -33,6 +33,14 @@ you can invoke to cancel the task, which in turn will invoke `cb` with a `Error`
 with `err.cancel === true`. If the `queue` has been `destroy`ed the callback
 will be invoked immediately with an error.
 
+**Note**: The task will not be executed before the `nextTick` as to avoid the
+`worker` function from plugging the event loop. This means you can `.push` and
+`cancel` as many tasks as you want synchronously.
+
+**Note 2**: You can cancel a running task, but that does not mean the actual work
+done by the `worker` is stopped, just that the `cb` supplied to `.push` is
+removed from the queue and called with an `Error`.
+
 ### `queue.destroy([err])`
 
 Cancel all pending tasks, and call the callback of all running tasks with an
