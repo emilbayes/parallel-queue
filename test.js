@@ -2,12 +2,30 @@ var test = require('tape')
 var queue = require('.')
 
 test('pending', function (assert) {
-  assert.plan(3)
-  var q = queue(1, function (wait, cb) {
-    setTimeout(cb, wait)
+  assert.plan(4)
+  var q = queue(1, function pending (wait, cb) {
+    process.nextTick(cb, null, wait)
   })
 
-  q.push(1, function (err) {
+  q.push(1, function (err, value) {
+    assert.error(err)
+  })
+
+  q.push(2, function (err) {
+    assert.error(err)
+  })
+
+  assert.equal(q.pending, 2)
+  assert.equal(q.running, 0)
+})
+
+test('running', function (assert) {
+  assert.plan(4)
+  var q = queue(1, function pending (wait, cb) {
+    process.nextTick(cb, null, wait)
+  })
+
+  q.push(1, function (err, value) {
     assert.error(err)
   })
 

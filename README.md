@@ -54,6 +54,10 @@ Number of tasks that can run in parallel
 
 Number of tasks pending in the queue
 
+### `queue.running`
+
+Number of tasks running in the queue
+
 ### `queue.destroyed`
 
 Boolean set after `destroy` has finished

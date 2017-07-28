@@ -17,6 +17,13 @@ Object.defineProperty(ParallelQueue.prototype, 'pending', {
   }
 })
 
+Object.defineProperty(ParallelQueue.prototype, 'running', {
+  enumerable: true,
+  get: function () {
+    return this._running.length
+  }
+})
+
 ParallelQueue.prototype.push = function (task, cb) {
   if (this.destroyed === true) return cb(new Error('Already destroyed'))
   var args = {
