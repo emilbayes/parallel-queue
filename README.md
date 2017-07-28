@@ -23,7 +23,7 @@ pq.destroy()
 
 ### `var queue = parallelQueue(parallel, worker)`
 
-Create a queue that is limited to `limit` concurrent workers. `worker` will be
+Create a queue that is limited to `parallel` concurrent workers. `worker` will be
 invoked with `(task, cb)`.
 
 ### `var cancel = queue.push(task, cb)`
