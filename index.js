@@ -66,16 +66,16 @@ ParallelQueue.prototype._cancel = function (args, err) {
 }
 
 ParallelQueue.prototype._kick = function () {
-  if (this._running.length >= this.parallel) return
+  var self = this
+  if (self._running.length >= self.parallel) return
 
-  var args = this._queue.shift()
+  var args = self._queue.shift()
   if (args == null) return
 
-  this._running.push(args)
+  self._running.push(args)
 
-  this._worker(args.task, done)
+  self._worker(args.task, done)
 
-  var self = this
   function done (err, res1, res2, res3) {
     var idx = self._running.indexOf(args)
     if (idx >= 0) {
