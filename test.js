@@ -20,8 +20,10 @@ test('pending', function (assert) {
 })
 
 test('running', function (assert) {
-  assert.plan(4)
+  assert.plan(8)
   var q = queue(1, function pending (wait, cb) {
+    assert.equal(q.pending, 2 - wait)
+    assert.equal(q.running, 1)
     process.nextTick(cb, null, wait)
   })
 

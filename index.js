@@ -6,6 +6,7 @@ function ParallelQueue (parallel, worker) {
   this._worker = worker
   this._queue = []
   this._running = []
+  this._runningCount = 0
   this.parallel = parallel
   this.destroyed = false
 }
@@ -20,7 +21,7 @@ Object.defineProperty(ParallelQueue.prototype, 'pending', {
 Object.defineProperty(ParallelQueue.prototype, 'running', {
   enumerable: true,
   get: function () {
-    return this._running.length
+    return this._runningCount
   }
 })
 
@@ -62,29 +63,31 @@ ParallelQueue.prototype._cancel = function (args, err) {
     err.cancel = true
   }
 
-  process.nextTick(args.cb, err, null)
+  args.cb(err)
+  process.nextTick(this._kick.bind(this))
 }
 
 ParallelQueue.prototype._kick = function () {
   var self = this
-  if (self._running.length >= self.parallel) return
+  if (self._runningCount >= self.parallel) return
 
   var args = self._queue.shift()
   if (args == null) return
 
   self._running.push(args)
 
+  self._runningCount++
   self._worker(args.task, done)
 
   function done (err, res1, res2, res3) {
-    var idx = self._running.indexOf(args)
-    if (idx >= 0) {
-      self._running.splice(idx, 1)
+    self._runningCount--
+
+    var ridx = self._running.indexOf(args)
+    if (ridx >= 0) {
+      self._running.splice(ridx, 1)
+      args.cb(err, res1, res2, res3)
     }
 
-    process.nextTick(function () {
-      if (idx >= 0) args.cb(err, res1, res2, res3)
-      self._kick()
-    })
+    process.nextTick(self._kick.bind(self))
   }
 }
