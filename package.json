@@ -1,6 +1,6 @@
 {
   "name": "parallel-queue",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Queue for parallel tasks that can cancel and is destoryable",
   "main": "index.js",
   "dependencies": {},
